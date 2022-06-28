@@ -10,8 +10,6 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 2em;
-  /* font-family: "Anek Malayalam", sans-serif; */
-  /* font-family: "Roboto", sans-serif; */
   font-family: "Source Code Pro", monospace;
 }
 
@@ -28,6 +26,7 @@ body {
 .display,
 .output {
   width: 20.2rem;
+  min-height: 30px;
   display: flex;
   align-items: right;
   justify-content: right;
@@ -62,11 +61,16 @@ body {
 
 .button.orangebg {
   background-color: #ff9f1c;
+  color: rgb(100, 79, 79);
+}
+
+.button.orangebg:active {
+  background: #d18214;
   color: #fff;
 }
 
 #zero {
-  width: 10.2rem;
+  width: 10.4rem;
 }
 
 #zero:active {
