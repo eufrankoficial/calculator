@@ -9,7 +9,6 @@ let equal = document.querySelector('.equal');
 
 const operations = ['x', '+', '-', '÷'];
 
-
 function returnFormattedExpression(expression) {
   let formattedExpression = expression.replace('x', '*');
   formattedExpression = formattedExpression.replace('÷', '/');
@@ -18,15 +17,18 @@ function returnFormattedExpression(expression) {
 }
 
 equal.addEventListener('click', () => {
-  let expression = returnFormattedExpression(display.textContent);
-  
+  let expression = prepareToOperation(display.textContent)
   output.textContent = operation(expression);
 });
+
+
+function prepareToOperation(text) {
+  return returnFormattedExpression(text);
+}
 
 const operation = (exp) => {
   return new Function(`return ${exp}`)();
 };
-
 
 operators.forEach((operator) => {
   operator.addEventListener('click', (element) => {
@@ -47,14 +49,13 @@ operators.forEach((operator) => {
 
     display.append(element.target.textContent);
   });
-})
+});
 
 backspace.addEventListener('click', () => {
   if (display.textContent !== "") {
     display.textContent = display.textContent.slice(0, -1);
   }
 });
-
 
 clear.addEventListener('click', clearDisplay)
 
@@ -66,6 +67,10 @@ numbers.forEach((number) => {
       display.append(value);
     } else {
       display.textContent = value;
+    }
+
+    if ("0123456789.+-×÷".includes(display.textContent[display.textContent.length - 1])) {
+      output.textContent = operation(prepareToOperation(display.textContent));
     }
   });
 });
