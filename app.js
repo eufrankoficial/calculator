@@ -6,6 +6,8 @@ let clear = document.querySelector('.clear');
 let backspace = document.querySelector('.backspace');
 let operators = document.querySelectorAll('.operator');
 let equal = document.querySelector('.equal');
+let percent = document.querySelector('.percent');
+
 
 const operations = ['x', '+', '-', '÷'];
 
@@ -16,9 +18,16 @@ function returnFormattedExpression(expression) {
   return formattedExpression;
 }
 
+percent.addEventListener('click', () => {
+  const displayValue = display.textContent;
+  output.textContent = displayValue / 100;
+  display.textContent = output.textContent;
+});
+
 equal.addEventListener('click', () => {
   let expression = prepareToOperation(display.textContent)
   output.textContent = operation(expression);
+  display.textContent = output.textContent;
 });
 
 
