@@ -2,34 +2,58 @@ let numbers = document.querySelectorAll('.number');
 
 let display = document.querySelector('.display');
 let output = document.querySelector('.output');
+
 let clear = document.querySelector('.clear');
 let backspace = document.querySelector('.backspace');
 let operators = document.querySelectorAll('.operator');
 let equal = document.querySelector('.equal');
 let percent = document.querySelector('.percent');
+let dot = document.querySelector('.dot');
 
+const caracteres = ['x', '+', '-', '÷', '.', 'N'];
 
-const operations = ['x', '+', '-', '÷'];
-
-function returnFormattedExpression(expression) {
+const returnFormattedExpression = (expression) => {
   let formattedExpression = expression.replace('x', '*');
   formattedExpression = formattedExpression.replace('÷', '/');
   
   return formattedExpression;
 }
 
-percent.addEventListener('click', () => {
-  const displayValue = display.textContent;
-  output.textContent = displayValue / 100;
-  display.textContent = output.textContent;
-});
+const setDisplayContentText = (text) => {
+  display.textContent = text;
+}
 
-equal.addEventListener('click', () => {
-  let expression = prepareToOperation(display.textContent)
-  output.textContent = operation(expression);
-  display.textContent = output.textContent;
-});
+const clearDisplay = () => {
+  display.textContent = '';
+}
 
+const clearOutput = () => {
+  output.textContent = '';
+}
+
+const setOutputContentText = (text) => {
+  output.textContent = text;
+}
+
+const checkDisplayExpression = () => {
+  if (!isDisplayContentNotEmpty()) {
+    return false;
+  }
+
+  if (!checkIfLastCaracterIsAnOperationOrDot()) {
+    return true;
+  }
+
+  return false;
+}
+
+const checkIfCanDoOperation = () => {
+  return "0123456789.+-×÷".includes(display.textContent[display.textContent.length - 1]);
+}
+
+const isDisplayContentNotEmpty = () => {
+  return display.textContent.trim() !== '' ? true : false;
+}
 
 function prepareToOperation(text) {
   return returnFormattedExpression(text);
@@ -39,30 +63,61 @@ const operation = (exp) => {
   return new Function(`return ${exp}`)();
 };
 
+const checkIfLastCaracterIsAnOperationOrDot = () => {
+  const lastCaracter = display.textContent.slice(display.textContent.length - 1);
+    
+  if (caracteres.includes(lastCaracter)) {
+    setDisplayContentText("N/N");
+
+    return true;
+  }
+
+  return false;
+}
+
+dot.addEventListener('click', () => {
+  if(!checkIfLastCaracterIsAnOperationOrDot())
+    display.textContent = display.textContent + '.';
+  
+  return false;
+});
+
+percent.addEventListener('click', () => {
+  const displayValue = display.textContent;
+  
+  const result = operation(displayValue / 100);
+
+  setDisplayContentText(result);
+  setOutputContentText(result);
+});
+
+equal.addEventListener('click', () => {
+  if (checkIfCanDoOperation()) {
+    const result = operation(prepareToOperation(display.textContent));
+    setOutputContentText(
+      0
+    );
+    setDisplayContentText(
+      result
+    )
+  }
+});
+
 operators.forEach((operator) => {
   operator.addEventListener('click', (element) => {
     
-    if (display.textContent == "") {
+    if (!isDisplayContentNotEmpty() || checkIfLastCaracterIsAnOperationOrDot()) {
       return false;
     }
-
-    const lastCaracter = display.textContent.slice(display.textContent.length - 1);
     
-    if (operations.includes(lastCaracter)) {
-      display.textContent = "I got you!";
-      
-      setTimeout(clearDisplay, 2000);
-
-      return false;
-    }
-
     display.append(element.target.textContent);
   });
 });
 
+
 backspace.addEventListener('click', () => {
-  if (display.textContent !== "") {
-    display.textContent = display.textContent.slice(0, -1);
+  if (isDisplayContentNotEmpty()) {
+    setDisplayContentText(display.textContent.slice(0, -1));
   }
 });
 
@@ -72,20 +127,15 @@ numbers.forEach((number) => {
   number.addEventListener('click', (element) => {
     let value = element.target.textContent;
       
-    if (display.textContent !== "") {
+    if (isDisplayContentNotEmpty()) {
       display.append(value);
     } else {
-      display.textContent = value;
+      setDisplayContentText(value);
     }
 
-    if ("0123456789.+-×÷".includes(display.textContent[display.textContent.length - 1])) {
-      output.textContent = operation(prepareToOperation(display.textContent));
+    if (checkIfCanDoOperation()) {
+      setOutputContentText(operation(prepareToOperation(display.textContent)));
     }
   });
 });
 
-
-function clearDisplay() {
-  display.textContent = '';
-  output.textContent = '';
-}
