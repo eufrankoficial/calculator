@@ -23,12 +23,17 @@ const setDisplayContentText = (text) => {
   display.textContent = text;
 }
 
+const clearDisplayAndOutput = () => {
+  clearDisplay();
+  clearOutput();
+}
+
 const clearDisplay = () => {
   display.textContent = '';
 }
 
 const clearOutput = () => {
-  output.textContent = '';
+  output.textContent = '0';
 }
 
 const setOutputContentText = (text) => {
@@ -121,7 +126,7 @@ backspace.addEventListener('click', () => {
   }
 });
 
-clear.addEventListener('click', clearDisplay)
+clear.addEventListener('click', clearDisplayAndOutput)
 
 numbers.forEach((number) => {
   number.addEventListener('click', (element) => {
